@@ -13,3 +13,12 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Firebase emulator / rules tests
+rules-test/node_modules/
+*-debug.log
+.firebase/
+
+# Editor settings
+.idea/
+.vscode/
