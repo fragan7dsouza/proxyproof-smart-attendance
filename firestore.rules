@@ -1,0 +1,171 @@
+rules_version = '2';
+
+// ProxyProof security rules.
+// The Android app checks everything first so it can show friendly messages, but these rules are the
+// real gatekeeper: they run on Google's servers, so a modified app cannot skip them.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function profile() { return get(/databases/$(database)/documents/users/$(uid())).data; }
+    function isFaculty() { return signedIn() && profile().role == 'faculty'; }
+    function isStudent() { return signedIn() && profile().role == 'student'; }
+    function teachesStudent(courseId, studentId) {
+      return courseId is string
+        && get(/databases/$(database)/documents/courses/$(courseId)).data.facultyId == uid()
+        && exists(/databases/$(database)/documents/enrollments/$(courseId + '_' + studentId));
+    }
+    function changedOnly(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+
+    // ---- Users -------------------------------------------------------------------------------
+    match /users/{userId} {
+      // Profiles hold email and phone id: only the owner and faculty may read them.
+      allow read: if signedIn() && (uid() == userId || isFaculty());
+
+      // A student account is created together with its device binding (same batch).
+      allow create: if signedIn() && uid() == userId
+        && request.resource.data.name is string && request.resource.data.name.size() > 0
+        && (
+          // Faculty must know the access code the college admin stored in config/faculty
+          // (which no client can read), so students can't simply sign up as faculty.
+          (request.resource.data.role == 'faculty' && request.resource.data.deviceId == null
+              && request.resource.data.facultyCode is string
+              && request.resource.data.facultyCode == get(/databases/$(database)/documents/config/faculty).data.code)
+          || (request.resource.data.role == 'student'
+              && request.resource.data.deviceId is string
+              && getAfter(/databases/$(database)/documents/devices/$(request.resource.data.deviceId)).data.uid == uid())
+        );
+
+      // Role and binding can't be self-edited. Two narrow exceptions:
+      //  - a student with no phone (after a faculty reset) binds the phone they sign in on;
+      //  - the faculty of a course the student is enrolled in clears the binding (phone changed/lost).
+      allow update: if (
+          signedIn() && uid() == userId
+          && resource.data.role == 'student'
+          && resource.data.deviceId == null
+          && changedOnly(['deviceId'])
+          && request.resource.data.deviceId is string
+          && getAfter(/databases/$(database)/documents/devices/$(request.resource.data.deviceId)).data.uid == uid()
+        ) || (
+          isFaculty()
+          && resource.data.role == 'student'
+          && changedOnly(['deviceId', 'resetCourseId'])
+          && request.resource.data.deviceId == null
+          && teachesStudent(request.resource.data.resetCourseId, userId)
+        );
+    }
+
+    // ---- Devices: one phone, one student ----------------------------------------------------------
+    match /devices/{deviceId} {
+      allow read: if signedIn();
+      // create fails if the doc exists (that would be an update), so a phone can't be claimed twice.
+      allow create: if signedIn() && request.resource.data.uid == uid();
+      allow update: if signedIn() && resource.data.uid == uid() && request.resource.data.uid == uid();
+      // Only as part of a reset by that student's own faculty (see users update above).
+      allow delete: if isFaculty()
+        && getAfter(/databases/$(database)/documents/users/$(resource.data.uid)).data.deviceId == null
+        && teachesStudent(getAfter(/databases/$(database)/documents/users/$(resource.data.uid)).data.resetCourseId,
+                          resource.data.uid);
+    }
+
+    // config/* is set by the college admin in the Firebase console; clients can never read or write it.
+    match /config/{docId} {
+      allow read, write: if false;
+    }
+
+    // ---- Courses ---------------------------------------------------------------------------------
+    match /courses/{courseId} {
+      allow read: if signedIn();
+      allow create: if isFaculty() && request.resource.data.facultyId == uid()
+        && request.resource.data.joinCode is string && request.resource.data.joinCode.size() == 6;
+      allow update, delete: if isFaculty() && resource.data.facultyId == uid();
+    }
+
+    // ---- Enrolments: enrollments/{courseId}_{studentId} --------------------------------------------
+    match /enrollments/{enrollmentId} {
+      allow read: if signedIn();
+      allow create: if isStudent()
+        && request.resource.data.studentId == uid()
+        && enrollmentId == request.resource.data.courseId + '_' + uid()
+        && exists(/databases/$(database)/documents/courses/$(request.resource.data.courseId));
+      allow update: if false;
+      allow delete: if isFaculty()
+        && get(/databases/$(database)/documents/courses/$(resource.data.courseId)).data.facultyId == uid();
+    }
+
+    // ---- Class sessions --------------------------------------------------------------------------
+    match /sessions/{sessionId} {
+      allow read: if signedIn();
+      allow create: if isFaculty()
+        && request.resource.data.facultyId == uid()
+        && request.resource.data.active == true
+        && request.resource.data.radiusM is number
+        && request.resource.data.radiusM > 0 && request.resource.data.radiusM <= 200
+        && request.resource.data.lat is number && request.resource.data.lng is number
+        && request.resource.data.mPerDegLng is number
+        && get(/databases/$(database)/documents/courses/$(request.resource.data.courseId)).data.facultyId == uid();
+      allow update: if signedIn() && resource.data.facultyId == uid()
+        && changedOnly(['active', 'endedAt']);
+
+      // The rotating QR token. Only the faculty running the class can read it; students can only
+      // obtain it by scanning the screen in the room.
+      match /secret/{docId} {
+        allow read, write: if signedIn()
+          && get(/databases/$(database)/documents/sessions/$(sessionId)).data.facultyId == uid();
+      }
+    }
+
+    // ---- Attendance: attendance/{sessionId}_{studentId} --------------------------------------------
+    match /attendance/{recordId} {
+      // resource == null lets a student check "have I already marked?" on a record that doesn't exist.
+      // Students see their own records; faculty see records of classes they ran.
+      allow read: if signedIn()
+        && (resource == null || resource.data.studentId == uid() || resource.data.facultyId == uid());
+      allow create: if isStudent() && validAttendance(recordId, request.resource.data);
+      // Records are permanent: no edits, no deletes, not even by the student who made them.
+      allow update, delete: if false;
+    }
+
+    function withinRadius(lat, lng, s) {
+      return lat is number && lng is number
+        && math.pow((lng - s.lng) * s.mPerDegLng, 2) + math.pow((lat - s.lat) * 111320, 2)
+           <= math.pow(s.radiusM, 2);
+    }
+
+    function validAttendance(recordId, a) {
+      let session = get(/databases/$(database)/documents/sessions/$(a.sessionId)).data;
+      let secret = get(/databases/$(database)/documents/sessions/$(a.sessionId)/secret/token).data;
+      let me = profile();
+      return
+        // one record per student per class
+        recordId == a.sessionId + '_' + uid()
+        && a.studentId == uid()
+        && a.keys().hasOnly(['sessionId', 'courseId', 'studentId', 'studentName', 'rollNo',
+                             'deviceId', 'token', 'distanceM', 'lat', 'lng', 'facultyId', 'markedAt'])
+        // class is running and the student belongs to it
+        && session.active == true
+        && a.courseId == session.courseId
+        && a.facultyId == session.facultyId
+        && exists(/databases/$(database)/documents/enrollments/$(session.courseId + '_' + uid()))
+        // QR freshness: the current token for 30 s after it was issued, or the previous one for
+        // 10 s after it was replaced (covers a scan that lands just as the code changes)
+        && a.token is string && a.token.size() == 16
+        && (
+          (a.token == secret.token && request.time < secret.tokenAt + duration.value(30, 's'))
+          || (a.token == secret.prevToken && request.time < secret.tokenAt + duration.value(10, 's'))
+        )
+        // the phone bound to this account, and that phone bound back to this account
+        && a.deviceId == me.deviceId
+        && get(/databases/$(database)/documents/devices/$(a.deviceId)).data.uid == uid()
+        // inside the geofence, computed here from the raw coordinates (flat-earth approximation,
+        // accurate to well under a metre at classroom distances), not taken from the phone's word
+        && a.distanceM is number
+        && withinRadius(a.lat, a.lng, session)
+        // server clock, not the phone's
+        && a.markedAt == request.time;
+    }
+  }
+}
