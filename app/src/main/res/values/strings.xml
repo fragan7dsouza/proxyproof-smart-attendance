@@ -1,3 +1,234 @@
 <resources>
-    <string name="app_name">Smart attendance</string>
+    <string name="app_name">ProxyProof</string>
+    <string name="brand_name">ProxyProof</string>
+
+    <!-- Common actions -->
+    <string name="action_back">Back</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_close">Close</string>
+    <string name="action_ok">OK</string>
+    <string name="action_done">Done</string>
+    <string name="action_retry">Try again</string>
+    <string name="action_try_again">Try again</string>
+    <string name="action_scan_again">Scan again</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_out">Sign out</string>
+    <string name="action_go_register">New here? Create an account</string>
+    <string name="action_create_account">Create account</string>
+    <string name="action_join">Join</string>
+    <string name="action_join_course">Join a course</string>
+    <string name="action_mark_attendance">Mark attendance</string>
+    <string name="action_new_course">New course</string>
+    <string name="action_create_course">Create course</string>
+    <string name="action_start_class">Start class</string>
+    <string name="action_resume_class">Resume live class</string>
+    <string name="action_end_class">End class</string>
+    <string name="action_keep_running">Keep it running</string>
+    <string name="action_leave_open">Leave it open</string>
+    <string name="action_copy_code">Copy join code</string>
+    <string name="action_export">Export register</string>
+    <string name="action_reset_phone">Reset phone</string>
+
+    <!-- Launch -->
+    <string name="loading_profile">Opening your account…</string>
+    <string name="error_profile_missing">Your account has no profile yet. Create the account again or contact your faculty.</string>
+    <string name="error_other_device">This account is linked to a different phone. Ask your faculty to reset your phone, then sign in again here.</string>
+    <string name="error_device_taken">This phone is already linked to another student account. Each phone can mark attendance for only one student.</string>
+
+    <!-- Sign in / register -->
+    <string name="login_title">Sign in</string>
+    <string name="login_subtitle">Attendance that only counts when you\'re actually in the room.</string>
+    <string name="hint_email">College email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_new_password">Choose a password</string>
+    <string name="helper_password">At least 6 characters</string>
+    <string name="hint_full_name">Full name</string>
+    <string name="hint_roll">Roll number</string>
+    <string name="hint_department">Department (optional)</string>
+    <string name="signing_in">Signing in…</string>
+    <string name="creating_account">Creating account…</string>
+    <string name="register_title">Create your account</string>
+    <string name="role_student">Student</string>
+    <string name="role_faculty">Faculty</string>
+    <string name="register_student_hint">Your account will be linked to this phone. You\'ll only be able to mark attendance from it.</string>
+    <string name="register_faculty_hint">You\'ll create courses, run live classes and download attendance registers.</string>
+    <string name="error_email_required">Enter your email.</string>
+    <string name="error_password_required">Enter your password.</string>
+    <string name="error_email_invalid">Enter a valid email address.</string>
+    <string name="error_email_taken">An account with this email already exists. Sign in instead.</string>
+    <string name="error_password_short">Use at least 6 characters.</string>
+    <string name="error_name_required">Enter your name as it appears on the class list.</string>
+    <string name="error_roll_required">Enter your roll number.</string>
+    <string name="hint_faculty_code">Faculty access code</string>
+    <string name="helper_faculty_code">Given to staff by the college admin</string>
+    <string name="error_faculty_code_required">Enter the faculty access code.</string>
+    <string name="error_faculty_code_wrong">That faculty access code is wrong. Check it with your college admin.</string>
+    <string name="error_bad_login">Email or password is incorrect.</string>
+
+    <!-- Errors -->
+    <string name="error_offline">You\'re offline. Check your internet connection and try again.</string>
+    <string name="error_denied">The server refused this request.</string>
+    <string name="error_generic">Something went wrong. Try again.</string>
+
+    <!-- Student home -->
+    <string name="greeting">Hi, %1$s</string>
+    <string name="student_subtitle">Roll no. %1$s</string>
+    <string name="overall_label">Overall attendance</string>
+    <string name="your_courses">Your courses</string>
+    <string name="course_row_subtitle">%1$s, %2$s</string>
+    <string name="no_classes_short">No classes</string>
+    <string name="student_empty_title">No courses yet</string>
+    <string name="student_empty_body">Ask your faculty for the 6-character join code, then add the course here.</string>
+    <string name="join_title">Join a course</string>
+    <string name="join_message">Enter the code your faculty shared in class.</string>
+    <string name="hint_join_code">Join code</string>
+    <string name="error_join_length">Join codes are 6 characters.</string>
+    <string name="error_join_unknown">No course uses that code. Check it with your faculty.</string>
+    <string name="error_join_already">You\'re already in %1$s.</string>
+    <string name="joined">Joined %1$s</string>
+    <string name="sign_out_title">Sign out?</string>
+    <string name="sign_out_message_student">Your account stays linked to this phone. Sign back in here to mark attendance.</string>
+    <string name="sign_out_message_faculty">Any class you left running will stop showing a code until you sign in again.</string>
+
+    <plurals name="classes_attended">
+        <item quantity="one">%1$d of %2$d class attended</item>
+        <item quantity="other">%1$d of %2$d classes attended</item>
+    </plurals>
+    <string name="standing_none">No classes have been held yet.</string>
+    <string name="standing_on_line">You\'re exactly on the line. Missing the next class takes you below 75%.</string>
+    <plurals name="standing_spare">
+        <item quantity="one">You can miss %d more class and stay at 75%%.</item>
+        <item quantity="other">You can miss %d more classes and stay at 75%%.</item>
+    </plurals>
+    <plurals name="standing_needed">
+        <item quantity="one">Below 75%%. Attend the next class to get back on track.</item>
+        <item quantity="other">Below 75%%. Attend the next %d classes in a row to get back on track.</item>
+    </plurals>
+
+    <!-- Student course history -->
+    <string name="history_heading">Classes</string>
+    <string name="history_empty">Your faculty hasn\'t held a class in this course yet.</string>
+    <string name="history_marked">Marked at %1$s, %2$d m from class</string>
+    <string name="history_live">Happening now</string>
+    <string name="status_present">Present</string>
+    <string name="status_absent">Absent</string>
+    <string name="status_live">Live</string>
+
+    <!-- Mark attendance -->
+    <string name="mark_title">Mark attendance</string>
+    <string name="mark_intro">Five checks run in order. Your attendance is recorded only when all of them pass.</string>
+    <string name="step_device">This phone is yours</string>
+    <string name="step_device_hint">Matches the phone linked to your account</string>
+    <string name="step_device_ok">Linked to your account</string>
+    <string name="step_identity">Confirm it\'s you</string>
+    <string name="step_identity_hint">Fingerprint, face or screen lock</string>
+    <string name="step_identity_ok">Confirmed</string>
+    <string name="step_identity_none">Set up a fingerprint or screen lock in your phone\'s settings, then try again.</string>
+    <string name="step_identity_cancelled">Cancelled. Tap try again when you\'re ready.</string>
+    <string name="step_location">Check you\'re in class</string>
+    <string name="step_location_hint">Uses GPS once, only while marking</string>
+    <string name="step_location_ok">Location found, accurate to %1$d m</string>
+    <string name="step_location_none">Couldn\'t get your location. Turn on location, move near a window and try again.</string>
+    <string name="step_location_denied">Location permission is needed to prove you\'re in the classroom.</string>
+    <string name="step_location_mock">A fake GPS app is active. Turn it off in developer options, then try again.</string>
+    <string name="step_scan">Scan the class code</string>
+    <string name="step_scan_hint">The QR on your faculty\'s screen</string>
+    <string name="step_scan_ok">Code read</string>
+    <string name="step_scan_cancelled">Scan cancelled.</string>
+    <string name="step_scan_invalid">That QR isn\'t a ProxyProof class code.</string>
+    <string name="scan_prompt">Point at the QR on your faculty\'s screen</string>
+    <string name="step_record">Record attendance</string>
+    <string name="step_record_hint">Checked again by the server</string>
+    <string name="record_ok">Saved, %1$d m from your faculty</string>
+    <string name="record_already">Already marked at %1$s</string>
+    <string name="record_no_session">This code doesn\'t belong to any class.</string>
+    <string name="record_closed">This class has ended, so attendance is closed.</string>
+    <string name="record_not_enrolled">You\'re not enrolled in %1$s. Join it with the course\'s join code first.</string>
+    <string name="record_too_far">You\'re about %1$d m from the classroom. You need to be within %2$d m.</string>
+    <string name="record_expired">This code has expired. Scan the code on the screen again.</string>
+    <string name="result_ok_title">You\'re marked present</string>
+    <string name="result_ok_body">%1$s, at %2$s.</string>
+    <string name="result_already_title">Already marked</string>
+    <string name="result_already_body">You were marked present for %1$s at %2$s.</string>
+    <string name="result_fail_title">Not marked</string>
+    <string name="biometric_title">Confirm it\'s you</string>
+    <string name="biometric_subtitle">Marking attendance as %1$s</string>
+
+    <!-- Faculty home -->
+    <string name="faculty_course_subtitle">%1$s, join code %2$s</string>
+    <string name="faculty_empty_title">No courses yet</string>
+    <string name="faculty_empty_body">Create a course, then share its join code with your class. Students join once and you\'re ready to take attendance.</string>
+    <string name="new_course_title">New course</string>
+    <string name="hint_course_name">Course name</string>
+    <string name="hint_course_code">Course code, for example CS301</string>
+    <string name="error_course_name">Enter the course name.</string>
+    <string name="error_course_code">Enter the course code.</string>
+    <plurals name="students_count">
+        <item quantity="one">%d student</item>
+        <item quantity="other">%d students</item>
+    </plurals>
+    <plurals name="classes_held">
+        <item quantity="one">%d class held</item>
+        <item quantity="other">%d classes held</item>
+    </plurals>
+
+    <!-- Course (faculty) -->
+    <string name="course_meta">%1$s, %2$s</string>
+    <string name="join_code_label">Join code</string>
+    <string name="join_code_hint">Students enter this once to join</string>
+    <string name="copied_join_code">Copied %1$s</string>
+    <string name="tab_classes">Classes</string>
+    <string name="tab_students">Students</string>
+    <string name="course_no_classes">No classes yet. Start one when you\'re in the classroom.</string>
+    <string name="course_no_students">No students have joined. Share the join code %1$s with your class.</string>
+    <string name="student_row_subtitle">%1$s, %2$s</string>
+    <plurals name="attended_short">
+        <item quantity="one">%1$d of %2$d class</item>
+        <item quantity="other">%1$d of %2$d classes</item>
+    </plurals>
+    <string name="session_live">Live now</string>
+    <string name="session_ended">Ended %1$s, %2$d m radius</string>
+    <string name="present_of">%1$d of %2$d</string>
+    <string name="radius_title">How close must students be?</string>
+    <string name="radius_option">Within %1$d m of you</string>
+    <string name="reset_title">Reset phone for %1$s?</string>
+    <string name="reset_message">Use this when a student changes or loses their phone. The next phone they sign in on becomes their attendance phone.</string>
+    <string name="reset_done">%1$s can now sign in on a new phone</string>
+    <string name="export_subject">Attendance register, %1$s %2$s</string>
+    <string name="export_chooser">Send register</string>
+    <string name="export_failed">Couldn\'t create the file: %1$s</string>
+
+    <!-- Live class -->
+    <string name="live_badge">Live</string>
+    <string name="live_qr_description">Attendance QR code. It changes every 15 seconds.</string>
+    <string name="live_locating">Finding your location…</string>
+    <string name="live_starting">Starting class…</string>
+    <string name="live_countdown">New code in %1$d s</string>
+    <string name="live_reconnecting">Can\'t reach the server. Retrying…</string>
+    <string name="live_waiting">Names appear here as students mark attendance.</string>
+    <string name="live_present">present</string>
+    <plurals name="live_present_of">
+        <item quantity="one">of %d student present</item>
+        <item quantity="other">of %d students present</item>
+    </plurals>
+    <string name="live_need_location">Location permission is needed. Your position sets the classroom area students must be in.</string>
+    <string name="live_no_location">Couldn\'t get your location. Turn on location and try again.</string>
+    <string name="live_cant_start">Can\'t start the class</string>
+    <string name="end_title">End this class?</string>
+    <plurals name="end_message">
+        <item quantity="one">%1$d of %2$d student has marked attendance. Nobody can mark after you end the class.</item>
+        <item quantity="other">%1$d of %2$d students have marked attendance. Nobody can mark after you end the class.</item>
+    </plurals>
+    <string name="leave_title">Leave the live class?</string>
+    <string name="leave_message">The code stops changing while this screen is closed, so nobody can mark attendance. You can resume it from the course page.</string>
+
+    <!-- Session report -->
+    <string name="report_subtitle">%1$s, %2$d m radius</string>
+    <string name="report_present_caption">students present</string>
+    <string name="report_still_live">present so far. This class is still live.</string>
+    <string name="report_present_row">%1$s, %2$d m away</string>
+    <string name="tab_present">Present (%1$d)</string>
+    <string name="tab_absent">Absent (%1$d)</string>
+    <string name="report_none_present">Nobody marked attendance for this class.</string>
+    <string name="report_none_absent">Everyone enrolled was present.</string>
 </resources>

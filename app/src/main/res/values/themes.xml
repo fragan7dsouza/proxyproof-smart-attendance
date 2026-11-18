@@ -1,9 +1,134 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Base.Theme.SmartAttendance" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/ink</item>
+        <item name="colorOnPrimary">@color/on_ink</item>
+        <item name="colorPrimaryContainer">@color/rule</item>
+        <item name="colorOnPrimaryContainer">@color/text</item>
+        <item name="colorSecondary">@color/ink_soft</item>
+        <item name="colorOnSecondary">@color/on_ink</item>
+        <item name="colorSecondaryContainer">@color/rule</item>
+        <item name="colorOnSecondaryContainer">@color/text</item>
+        <item name="colorError">@color/absent</item>
+        <item name="android:colorBackground">@color/paper</item>
+        <item name="colorSurface">@color/paper</item>
+        <item name="colorSurfaceContainer">@color/surface</item>
+        <item name="colorSurfaceContainerLow">@color/surface</item>
+        <item name="colorSurfaceContainerHigh">@color/surface</item>
+        <item name="colorSurfaceContainerHighest">@color/surface</item>
+        <item name="colorOnSurface">@color/text</item>
+        <item name="colorOnSurfaceVariant">@color/muted</item>
+        <item name="colorOutline">@color/muted</item>
+        <item name="colorOutlineVariant">@color/rule</item>
+        <item name="android:statusBarColor">@color/paper</item>
+        <item name="android:navigationBarColor">@color/paper</item>
+        <item name="android:windowLightStatusBar">@bool/light_bars</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">@bool/light_bars</item>
+        <item name="android:fontFamily">@font/public_sans</item>
+        <item name="materialButtonStyle">@style/Widget.App.Button</item>
+        <item name="textInputStyle">@style/Widget.App.TextInput</item>
+        <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.Dialog</item>
     </style>
 
     <style name="Theme.SmartAttendance" parent="Base.Theme.SmartAttendance" />
+
+    <!-- The live QR screen inverts to ink so the code reads from the back of a classroom. -->
+    <style name="Theme.SmartAttendance.Ink" parent="Theme.SmartAttendance">
+        <item name="android:statusBarColor">@color/ink</item>
+        <item name="android:navigationBarColor">@color/ink</item>
+        <item name="android:windowLightStatusBar">@bool/dark_bars</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">@bool/dark_bars</item>
+        <item name="android:windowBackground">@color/ink</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorSurfaceContainerHigh">@color/surface</item>
+        <item name="shapeAppearanceOverlay">@style/Shape.App.Dialog</item>
+    </style>
+
+    <style name="Shape.App.Dialog" parent="">
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="Widget.App.Button" parent="Widget.Material3.Button">
+        <item name="android:minHeight">52dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+    <style name="Widget.App.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">52dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="strokeColor">@color/rule</item>
+    </style>
+
+    <style name="Widget.App.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="Widget.App.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="boxStrokeColor">@color/ink</item>
+        <item name="boxBackgroundColor">@color/surface</item>
+    </style>
+
+    <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="titleTextAppearance">@style/Text.App.ToolbarTitle</item>
+        <item name="android:background">@color/paper</item>
+        <item name="contentInsetStart">20dp</item>
+    </style>
+
+    <style name="Text.App.ToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <!-- Type scale: 32 / 22 / 17 / 15 / 13 -->
+    <style name="Text.App.Display" parent="">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineSpacingExtra">2sp</item>
+    </style>
+
+    <style name="Text.App.Heading" parent="">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text</item>
+    </style>
+
+    <style name="Text.App.Title" parent="">
+        <item name="android:textSize">17sp</item>
+        <item name="android:fontFamily">@font/public_sans_600</item>
+        <item name="android:textColor">@color/text</item>
+    </style>
+
+    <style name="Text.App.Body" parent="">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/muted</item>
+        <item name="android:lineSpacingExtra">3sp</item>
+    </style>
+
+    <style name="Text.App.Caption" parent="">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/muted</item>
+    </style>
+
+    <style name="Text.App.Section" parent="">
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">@font/public_sans_600</item>
+        <item name="android:textColor">@color/muted</item>
+    </style>
 </resources>
