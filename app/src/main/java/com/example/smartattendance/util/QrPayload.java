@@ -12,6 +12,11 @@ public final class QrPayload {
         this.token = token;
     }
 
+    /** Demo mode only: stands in for a scanned code when the laptop has no camera to scan with. */
+    public static QrPayload demo(String sessionId) {
+        return new QrPayload(sessionId, "DEMOSCAN00000000");
+    }
+
     public static String encode(String sessionId, String token) {
         return PREFIX + "|" + sessionId + "|" + token;
     }

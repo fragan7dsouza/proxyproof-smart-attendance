@@ -134,6 +134,9 @@
     <string name="step_scan">Scan the class code</string>
     <string name="step_scan_hint">The QR on your faculty\'s screen</string>
     <string name="step_scan_ok">Code read</string>
+    <string name="step_location_demo">Demo mode: location auto-verified</string>
+    <string name="step_scan_demo">Demo mode: class code accepted (camera skipped)</string>
+    <string name="demo_no_live_class">No live class for your courses. Ask your faculty to start one.</string>
     <string name="step_scan_cancelled">Scan cancelled.</string>
     <string name="step_scan_invalid">That QR isn\'t a ProxyProof class code.</string>
     <string name="scan_prompt">Point at the QR on your faculty\'s screen</string>

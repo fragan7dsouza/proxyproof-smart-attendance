@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Source;
@@ -40,7 +41,9 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The student's proof chain. Each check must pass before the next one runs:
@@ -124,7 +127,8 @@ public class MarkAttendanceActivity extends AppCompatActivity {
                     @Override
                     public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
                         identity.done(getString(R.string.step_identity_ok));
-                        checkLocation();
+                        if (ProxyProofApp.demo) demoFindClass();
+                        else checkLocation();
                     }
 
                     @Override
@@ -180,6 +184,45 @@ public class MarkAttendanceActivity extends AppCompatActivity {
     @SuppressWarnings("deprecation")
     static boolean isMock(Location loc) {
         return Build.VERSION.SDK_INT >= 31 ? loc.isMock() : loc.isFromMockProvider();
+    }
+
+    /**
+     * Demo mode (local emulators only): a laptop has no real GPS or camera, so find the live class this
+     * student is enrolled in, place them at the class and stand in for the scan. The record step and the
+     * server's other checks (enrolment, phone binding, one mark per class, server time) still run.
+     */
+    private void demoFindClass() {
+        resetFrom(location);
+        location.running();
+        Db.col(Db.ENROLLMENTS).whereEqualTo("studentId", me.uid).get(Source.SERVER).continueWithTask(enrolled -> {
+            Set<String> courses = new HashSet<>();
+            for (DocumentSnapshot d : enrolled.getResult()) courses.add(d.getString("courseId"));
+            return Db.col(Db.SESSIONS).whereEqualTo("active", true).get(Source.SERVER)
+                    .continueWith(live -> {
+                        for (DocumentSnapshot d : live.getResult()) {
+                            ClassSession s = d.toObject(ClassSession.class);
+                            if (s != null && courses.contains(s.courseId)) return s;
+                        }
+                        return null;
+                    });
+        }).addOnCompleteListener(task -> {
+            if (isDestroyed()) return;
+            if (!task.isSuccessful()) {
+                fail(location, Ui.explain(this, task.getException()), R.string.action_try_again, this::demoFindClass);
+                return;
+            }
+            ClassSession session = task.getResult();
+            if (session == null) {
+                fail(location, getString(R.string.demo_no_live_class), R.string.action_try_again, this::demoFindClass);
+                return;
+            }
+            fix = new Location("demo");
+            fix.setLatitude(session.lat);
+            fix.setLongitude(session.lng);
+            location.done(getString(R.string.step_location_demo));
+            scan.done(getString(R.string.step_scan_demo));
+            recordAttendance(QrPayload.demo(session.id));
+        });
     }
 
     // 4. Scan --------------------------------------------------------------------------------

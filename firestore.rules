@@ -150,6 +150,7 @@ service cloud.firestore {
         && a.courseId == session.courseId
         && a.facultyId == session.facultyId
         && exists(/databases/$(database)/documents/enrollments/$(session.courseId + '_' + uid()))
+        // QR-CHECK-BEGIN (start-demo.bat removes this block from its local demo copy only; laptops can't scan)
         // QR freshness: the current token for 30 s after it was issued, or the previous one for
         // 10 s after it was replaced (covers a scan that lands just as the code changes)
         && a.token is string && a.token.size() == 16
@@ -157,6 +158,7 @@ service cloud.firestore {
           (a.token == secret.token && request.time < secret.tokenAt + duration.value(30, 's'))
           || (a.token == secret.prevToken && request.time < secret.tokenAt + duration.value(10, 's'))
         )
+        // QR-CHECK-END
         // the phone bound to this account, and that phone bound back to this account
         && a.deviceId == me.deviceId
         && get(/databases/$(database)/documents/devices/$(a.deviceId)).data.uid == uid()
