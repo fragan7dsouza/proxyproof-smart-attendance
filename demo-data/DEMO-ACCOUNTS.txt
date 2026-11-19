@@ -1,0 +1,13 @@
+ProxyProof demo accounts (local emulator only, test data)
+
+Faculty   meera.kamath@college.edu   /  faculty123
+Student   ananya.bhat@college.edu    /  student123
+Faculty access code (for new faculty sign-ups): STAFF-2026
+Emulator screen PIN: 1234
+
+Courses: Mobile Application Development (CS2232, join code SNK855)
+         Software Engineering (CS2210, join code QNN7UP)
+Each has 8 students and past classes, so percentages and reports are filled in.
+
+Data resets to this saved copy every time start-demo.bat runs.
+The student account is linked to the Android emulator, so sign in as the student only there.

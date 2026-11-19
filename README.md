@@ -95,6 +95,12 @@ The repo ships with a placeholder `app/google-services.json` (project `demo-prox
 
 The emulator camera can't scan QR codes, so use real phones to try the scan itself.
 
+**Shortcut on Windows:** double-click `start-demo.bat`. It starts the backend with ready-made demo data
+(two courses, a faculty and a student account, past classes; logins in `demo-data/DEMO-ACCOUNTS.txt`) and boots
+the emulator. Against the local backend the app runs in **demo mode**: location is auto-verified and the QR scan
+is simulated, so the whole mark-attendance flow works without a phone. Every other server check still runs, and
+with a real Firebase project the app always uses real GPS and the camera.
+
 ### Option B: real phones with your own Firebase project
 
 1. In the [Firebase console](https://console.firebase.google.com), create a project and add an Android app with
